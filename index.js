@@ -3,6 +3,7 @@ const svgexport = require('svgexport');
 const imagemin = require('imagemin');
 const imageminPngquant = require('imagemin-pngquant');
 const inquirer = require('inquirer');
+const jimp = require('jimp');
 const del = require('delete');
 let folder = '../_loga/';
 let files = [];
@@ -24,6 +25,20 @@ const svg2png = svg => {
 const makePngs = files => {
   files.forEach(svg => {
     svg2png(svg);
+  });
+};
+
+const resizePngs = files => {
+  files.forEach(file => {
+    jimp
+      .read(folder + file)
+      .then(pic =>
+        pic.contain(512, 512).write(folder + 'temp/' + file, () => {
+          optimize(file);
+          console.log(file);
+        })
+      )
+      .catch(e => console.error(e));
   });
 };
 
@@ -51,6 +66,7 @@ const execute = () => {
       del.promise([folder + 'temp', folder + 'png_final'], { force: true })
     )
     .then(() => makePngs(files.filter(f => f.endsWith('.svg'))))
+    .then(() => resizePngs(files.filter(f => f.endsWith('.png'))))
     .catch(e => console.error(e));
 };
 
