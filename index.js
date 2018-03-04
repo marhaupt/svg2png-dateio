@@ -2,8 +2,10 @@ const fs = require('fs');
 const svgexport = require('svgexport');
 const imagemin = require('imagemin');
 const imageminPngquant = require('imagemin-pngquant');
+const inquirer = require('inquirer');
 const del = require('delete');
-const folder = '../_loga/';
+let folder = '../_loga/';
+let files = [];
 
 const svg2png = svg => {
   const png = svg.replace('svg', 'png');
@@ -32,12 +34,23 @@ const optimize = png => {
 };
 
 const execute = () => {
-  const files = fs.readdirSync(folder);
+  inquirer.registerPrompt('directory', require('inquirer-select-directory'));
 
-  del
-    .promise([folder + 'temp', folder + 'png_final'], { force: true })
-    .then(() => console.log('deleted old files'))
-    .then(() => makePngs(files))
+  inquirer
+    .prompt([
+      {
+        type: 'directory',
+        name: 'from',
+        message: 'Kde jsou soubory?\n  . současný adresář, .. nadřazený',
+        basePath: folder
+      }
+    ])
+    .then(answer => answer.from)
+    .then(folder => (files = fs.readdirSync(folder)))
+    .then(() =>
+      del.promise([folder + 'temp', folder + 'png_final'], { force: true })
+    )
+    .then(() => makePngs(files.filter(f => f.endsWith('.svg'))))
     .catch(e => console.error(e));
 };
 
