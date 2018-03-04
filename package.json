@@ -9,6 +9,8 @@
   "author": "Martin Haupt",
   "license": "ISC",
   "dependencies": {
+    "imagemin": "^5.3.1",
+    "imagemin-pngquant": "^5.0.1",
     "svgexport": "^0.3.2"
   }
 }
