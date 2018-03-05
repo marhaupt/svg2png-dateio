@@ -5,7 +5,7 @@ const imageminPngquant = require('imagemin-pngquant');
 const inquirer = require('inquirer');
 const jimp = require('jimp');
 const del = require('delete');
-let folder = '../_loga/';
+let folder = './loga/';
 let files = [];
 
 const svg2png = svg => {
