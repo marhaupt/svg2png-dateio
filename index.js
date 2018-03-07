@@ -63,6 +63,20 @@ const optimize = png => {
   });
 };
 
+const handleJpgs = jpg => {
+  console.log('RENAMED ' + jpg);
+  const newPng = String(jpg)
+    .replace('.jpg', '.png')
+    .replace('.jpeg', '.png');
+  fs.rename(folder + jpg, folder + newPng, e => {
+    if (e) {
+      console.error(e);
+    } else {
+      resizePngSmall([newPng]);
+    }
+  });
+};
+
 const execute = () => {
   inquirer.registerPrompt('directory', require('inquirer-select-directory'));
 
@@ -84,6 +98,9 @@ const execute = () => {
     )
     .then(() => makePngs(files.filter(f => f.endsWith('.svg'))))
     .then(() => resizePngSmall(files.filter(f => f.endsWith('.png'))))
+    .then(() =>
+      handleJpgs(files.filter(f => f.endsWith('.jpg') || f.endsWith('.jpeg')))
+    )
     .catch(e => console.error(e));
 };
 
