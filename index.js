@@ -12,12 +12,11 @@ const svg2png = svg => {
   const png = svg.replace('svg', 'png');
   svgexport.render(
     {
-      input: [folder + svg, '512:512', 'pad', '80%'],
+      input: [folder + svg, '338:338', 'pad', '80%'],
       output: [folder + 'temp/' + png]
     },
     () => {
-      optimize(png);
-      console.log(svg);
+      finalSize(png);
     }
   );
 };
@@ -28,22 +27,38 @@ const makePngs = files => {
   });
 };
 
-const resizePngs = files => {
+const resizePngSmall = files => {
   files.forEach(file => {
     jimp
       .read(folder + file)
       .then(pic =>
-        pic.contain(512, 512).write(folder + 'temp/' + file, () => {
-          optimize(file);
-          console.log(file);
-        })
+        pic
+          .autocrop()
+          .contain(338, 338)
+          .write(folder + 'temp/' + file, () => {
+            finalSize(file);
+          })
       )
       .catch(e => console.error(e));
   });
 };
 
+const finalSize = file => {
+  var blank = new jimp(448, 448, 0xffffff00);
+
+  jimp
+    .read(folder + 'temp/' + file)
+    .then(pic =>
+      blank.composite(pic, 55, 55).write(folder + 'png/' + file, () => {
+        optimize(file);
+        console.log(file);
+      })
+    )
+    .catch(e => console.error(e));
+};
+
 const optimize = png => {
-  imagemin([folder + 'temp/' + png], folder + 'png_final', {
+  imagemin([folder + 'png/' + png], folder + 'png_final', {
     use: [imageminPngquant()]
   });
 };
@@ -63,10 +78,12 @@ const execute = () => {
     .then(answer => answer.from)
     .then(folder => (files = fs.readdirSync(folder)))
     .then(() =>
-      del.promise([folder + 'temp', folder + 'png_final'], { force: true })
+      del.promise([folder + 'temp', folder + 'png', folder + 'png_final'], {
+        force: true
+      })
     )
     .then(() => makePngs(files.filter(f => f.endsWith('.svg'))))
-    .then(() => resizePngs(files.filter(f => f.endsWith('.png'))))
+    .then(() => resizePngSmall(files.filter(f => f.endsWith('.png'))))
     .catch(e => console.error(e));
 };
 
