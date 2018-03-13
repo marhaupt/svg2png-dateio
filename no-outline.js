@@ -10,7 +10,7 @@ const svg2png = svg => {
   const png = svg.replace('svg', 'png');
   svgexport.render(
     {
-      input: [folder + svg, '412:412', 'pad', '80%'],
+      input: [folder + svg, '512:512', 'pad', '80%'],
       output: [folder + 'temp/' + png]
     },
     () => {
