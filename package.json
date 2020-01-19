@@ -9,12 +9,12 @@
   "author": "Martin Haupt",
   "license": "ISC",
   "dependencies": {
-    "delete": "^1.1.0",
-    "imagemin": "^5.3.1",
-    "imagemin-pngquant": "^5.0.1",
-    "inquirer": "^5.1.0",
-    "inquirer-select-directory": "^1.2.0",
-    "jimp": "^0.2.28",
-    "svgexport": "^0.3.2"
+    "delete": "1.1.0",
+    "imagemin": "5.3.1",
+    "imagemin-pngquant": "5.0.1",
+    "inquirer": "5.1.0",
+    "inquirer-select-directory": "1.2.0",
+    "jimp": "0.2.28",
+    "svgexport": "0.3.2"
   }
 }
